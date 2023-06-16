@@ -20,10 +20,18 @@ $ pig -x local -f pregunta.pig
 
         /* >>> Escriba su respuesta a partir de este punto <<< */
 */
-A = LOAD './data.csv' using PigStorage(',')
-     AS (num:int, name:chararray, LASTNAME:chararray, time:chararray, color:chararray, otre:int);
-B = FOREACH A GENERATE name, color;
-C = FILTER B BY NOT (color  MATCHES '.*b.*');
-DUMP B;
+lines = LOAD 'data.csv' USING PigStorage(',')
+    AS (
+            f1:int,
+            f2:chararray,
+            f3:chararray,
+            f4:chararray,
+            f5:chararray,
+            f6:int
+    );
 
-STORE C INTO 'output/' using PigStorage(',');
+
+B = FOREACH lines GENERATE f2 AS (nombre:chararray), f5 AS (color:chararray);
+C = FILTER B BY NOT STARTSWITH (color,'black') AND NOT STARTSWITH (color,'blue');
+
+STORE C INTO 'output' USING PigStorage(',');
