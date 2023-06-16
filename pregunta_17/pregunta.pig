@@ -19,19 +19,16 @@ $ pig -x local -f pregunta.pig
 
         /* >>> Escriba su respuesta a partir de este punto <<< */
 */
+Data_ = LOAD 'data.csv' USING PigStorage(',')
+    AS(
+        id: int,
+        name:chararray,
+        lsname:chararray,
+        date:chararray,
+        color:chararray,
+        numer:int
+      );
 
-lines = LOAD 'data.csv' USING PigStorage(',')
-    AS (
-            f1:int,
-            f2:chararray,
-            f3:chararray,
-            f4:chararray,
-            f5:chararray,
-            f6:int
-    );
-
-
-B = FOREACH lines GENERATE f2 AS (nombre:chararray), f5 AS (color:chararray);
-C = FILTER B BY STARTSWITH (color,'black') OR STARTSWITH (color,'blue');
-
-STORE C INTO 'output' USING PigStorage(',');
+step1 = FOREACH Data_ GENERATE name, color;
+step2 = FILTER step1 BY color IN ('blue', 'black');
+STORE step2 INTO 'output' USING PigStorage(',');
